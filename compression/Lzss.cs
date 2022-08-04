@@ -13,7 +13,7 @@ public class Lzss
         _compressionLevel = compressionLevel;
     }
 
-    public string LzssEncode(string input)
+    public string Encode(string input)
     {
         int buffer_size = GetBufferSize(input.Length);
         var buffer = new StringBuilder(buffer_size);
@@ -77,7 +77,7 @@ public class Lzss
         return output.ToString();
     }
 
-    public string LzssDecode(string input)
+    public string Decode(string input)
     {
         var match = Regex.Match(input, @"<(\d+),(\d+)>");
         var output = input;
