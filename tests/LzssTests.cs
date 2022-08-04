@@ -14,7 +14,7 @@ public class LzssTests
     }
 
     [Fact]
-    public void BasicTest()
+    public void BasicEncodingTest()
     {
         var encoder = new Lzss(CompressionLevel.SmallestSize);
         var input = "I AM SAM. I AM SAM. SAM I AM.";
@@ -22,15 +22,16 @@ public class LzssTests
 
         Assert.Equal("I AM SAM. <10,10>SAM I AM.", output);
     }
+
+    [Fact]
+    public void DrSeussEncodingSmallestSizeTest()
+    {
+        var encoder = new Lzss(CompressionLevel.SmallestSize);
+        var input = Strings.DrSeuss;
+        var output = encoder.LzssEncode(input);
+        var ratio = (double)output.Length / (double)input.Length;
+
+        Assert.Equal(Strings.DrSeussLzssEncoded, output);
+        Assert.Equal(ratio, 0.75);
+    }
 }
-
-/*
-I AM SAM. I AM SAM. SAM I AM.
-
-THAT SAM-I-AM! THAT SAM-I-AM! I DO NOT LIKE THAT SAM-I-AM!
-
-DO WOULD YOU LIKE GREEN EGGS AND HAM?
-
-I DO NOT LIKE THEM,SAM-I-AM.
-I DO NOT LIKE GREEN EGGS AND HAM.
-*/
