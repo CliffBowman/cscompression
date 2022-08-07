@@ -47,7 +47,7 @@ public class RunLengthEncodingTests
 
         Assert.Equal("AAAAABBBCCCCCC", output);
     }
-    
+
     [Fact]
     public void DigitsAtEndDecodingTest()
     {
@@ -56,4 +56,35 @@ public class RunLengthEncodingTests
 
         Assert.Equal("AAAAA66", output);
     }
+
+    [Fact]
+    public void EncodeBytesTest()
+    {
+        var input = new byte[] { 1, 1, 1, 2, 3, 4, 5, 6, 6, 6, 6 };
+        var expected = new byte[] { 131, 1, 5, 2, 3, 4, 5, 6, 131, 6 };
+        var output = new RunLengthEncoding().EncodeBytes(input);
+
+        Assert.Equal(expected, output);
+    }
+    
+    [Fact]
+    public void EncodeMaxEncodeSizeTest()
+    {
+        var input = Enumerable.Range(0, 128).Select(i => (byte)1).ToArray<byte>();
+        var expected = new byte[] { 255, 1, 129, 1 };
+        var output = new RunLengthEncoding().EncodeBytes(input);
+
+        Assert.Equal(expected, output);
+    }
+
+    [Fact]
+    public void DecodeBytesTest()
+    {
+        var input = new byte[] { 131, 1, 5, 2, 3, 4, 5, 6, 131, 6 };
+        var expected = new byte[] { 1, 1, 1, 2, 3, 4, 5, 6, 6, 6, 6 };
+        var output = new RunLengthEncoding().DecodeBytes(input);
+
+        Assert.Equal(expected, output);
+    }
+
 }
