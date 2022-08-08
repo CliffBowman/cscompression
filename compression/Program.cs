@@ -43,22 +43,42 @@ var outputStats = (int inputLength, int outputLength) =>
 byte[] input;
 byte[] output;
 
-input = File.ReadAllBytes("don_quixote.txt");
 
-using (new SimpleTimer("RLE bytes"))
-{
-    output = new RunLengthEncoding().EncodeBytes(input);
-    outputStats(input.Length, output.Length);
-}
+// input = File.ReadAllBytes("don_quixote.txt");
+
+// using (new SimpleTimer("RLE bytes"))
+// {
+//     output = new RunLengthEncoding().EncodeBytes(input);
+//     outputStats(input.Length, output.Length);
+// }
 
 
-input = File.ReadAllBytes("don_quixote.txt").ToArray();
-output = new MoveToFrontTransform().Encode(input);
+// input = File.ReadAllBytes("don_quixote.txt").ToArray();
+// output = new MoveToFrontTransform().Encode(input);
 
-using (new SimpleTimer("RLE bytes"))
-{
-    output = new RunLengthEncoding().EncodeBytes(output);
-    outputStats(input.Length, output.Length);
-}
+// using (new SimpleTimer("RLE bytes"))
+// {
+//     output = new RunLengthEncoding().EncodeBytes(output);
+//     outputStats(input.Length, output.Length);
+// }
+
+
+
+input = Encoding.ASCII.GetBytes("banana$");
+input = Encoding.ASCII.GetBytes("abracadabra$");
+output = new BurrowsWheelerTransform().Encode(input);
+
+var unencoded = Encoding.ASCII.GetString(output);
+
+// ard$rcaaaabb
+
+// var list = new List<List<byte>>();
+// list.Add(new List<byte>() { 3, 1 });
+// list.Add(new List<byte>() { 1 });
+// list.Add(new List<byte>() { 2, 3, 1 });
+// list.Add(new List<byte>() { 2, 2, 2, 2 });
+// list.Add(new List<byte>() { 2, 2, 2, 2 });
+
+// list.Sort(new ListComparer<byte>());
 
 var i = 1;
