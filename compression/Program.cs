@@ -40,11 +40,25 @@ var outputStats = (int inputLength, int outputLength) =>
 
 // File.WriteAllBytes("repeat.bin", output);
 
+byte[] input;
+byte[] output;
 
-var input = File.ReadAllBytes("don_quixote.txt");
+input = File.ReadAllBytes("don_quixote.txt");
 
 using (new SimpleTimer("RLE bytes"))
 {
-    var output = new RunLengthEncoding().EncodeBytes(input);
+    output = new RunLengthEncoding().EncodeBytes(input);
     outputStats(input.Length, output.Length);
 }
+
+
+input = File.ReadAllBytes("don_quixote.txt").ToArray();
+output = new MoveToFrontTransform().Encode(input);
+
+using (new SimpleTimer("RLE bytes"))
+{
+    output = new RunLengthEncoding().EncodeBytes(output);
+    outputStats(input.Length, output.Length);
+}
+
+var i = 1;
