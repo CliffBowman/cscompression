@@ -64,18 +64,26 @@ var outputStats = (int inputLength, int outputLength) =>
 
 // encode
 
-var inputLength = 100;
+var inputLength = 1000;
 var inputText = File.ReadAllText("don_quixote.txt").Substring(0, inputLength);
 var outputText = inputText;
 var output = Encoding.ASCII.GetBytes(outputText);
 var bwtIndex = -1;
 
-using (new SimpleTimer("BWT encode bytes"))
-{
-    var result = new BurrowsWheelerTransform().Encode(output);
-    output = result.data;
-    bwtIndex = result.index;
-}
+// using (new SimpleTimer("BWT encode bytes"))
+// {
+//     var result = new BurrowsWheelerTransform().Encode(output);
+//     output = result.data;
+//     bwtIndex = result.index;
+// }
+
+Dictionary<byte, bool[]> encodingDict = new();
+
+bool[] bitOutput;
+
+using (new SimpleTimer("HuffmanEncoding encode bytes"))
+    bitOutput = new HuffmanEncoding().Encode(output, ref encodingDict);
+
 
 // using (new SimpleTimer("MTF bytes")) output = new MoveToFrontTransform().Encode(output);
 
@@ -91,8 +99,7 @@ using (new SimpleTimer("BWT encode bytes"))
 // // using (new SimpleTimer("RLE bytes")) output = new RunLengthEncoding().EncodeBytes(output);
 
 // var outputLength = outputText.Length;
-
-// outputStats(inputLength, outputLength);
+outputStats(inputLength, bitOutput.Length);
 
 // File.WriteAllText("don_quixote_compressed.txt", outputText);
 
@@ -108,14 +115,35 @@ using (new SimpleTimer("BWT encode bytes"))
 // using (new SimpleTimer("MTF bytes")) output = new MoveToFrontTransform().Decode(output);
 // // using (new SimpleTimer("BWT bytes")) output = new BurrowsWheelerTransform().Decode(output);
 
-byte[] decoded;
-string decodedText;
+// byte[] decoded;
+// string decodedText;
 
-using (new SimpleTimer("BWT encode bytes"))
-{
-    decoded = new BurrowsWheelerTransform().Decode(output, bwtIndex);
-    decodedText = Encoding.ASCII.GetString(decoded);
-}
+// using (new SimpleTimer("BWT encode bytes"))
+// {
+//     decoded = new BurrowsWheelerTransform().Decode(output, bwtIndex);
+//     decodedText = Encoding.ASCII.GetString(decoded);
+// }
 
 
-var i = 1;
+// var input = Encoding.ASCII.GetBytes("this is an example of a huffman tree");
+// input = File.ReadAllBytes("don_quixote.txt");
+
+// bool[] output;
+// Dictionary<byte, bool[]> encodingDict = new();
+
+// using (new SimpleTimer("HuffmanEncoding encode bytes"))
+//     output = new HuffmanEncoding().Encode(input, ref encodingDict);
+
+// outputStats(input.Length, output.Length / 8);
+
+// using StreamWriter writer = new StreamWriter("dict.txt");
+
+// foreach (var entry in encodingDict)
+// {
+//     var sb = new StringBuilder();
+//     foreach (var bit in entry.Value)
+//         sb.Append(bit ? "1" : "0");
+//     writer.WriteLine($"{(char)entry.Key};{sb}");
+// }
+
+// var i = 1;

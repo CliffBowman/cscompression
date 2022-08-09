@@ -1,6 +1,6 @@
 Bzip2 algo
-- Run-length encoding (RLE) of initial data.
-- Burrows–Wheeler transform (BWT), or block sorting.
+- Run-length encoding (RLE) of initial data. // headers can make output larger than input
+- Burrows–Wheeler transform (BWT), or block sorting. // slow 
 - Move-to-front (MTF) transform.
 - Run-length encoding (RLE) of MTF result.
 - Huffman coding.
