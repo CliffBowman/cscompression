@@ -47,4 +47,18 @@ public class HuffmanEncodingTests
         Assert.Equal((byte)'d', tree.RightNode.RightNode.Byte);
         Assert.Equal(1, tree.RightNode.RightNode.Frequency);
     }
+
+    [Fact]
+    public void DecodeHuffmanTest()
+    {
+        var input = Encoding.ASCII.GetBytes("abbcdee");
+        Dictionary<byte, bool[]> codeBook = new();
+
+        var outputBits = new HuffmanEncoding().Encode(input, ref codeBook);
+        var outputBytes = new HuffmanEncoding().Decode(outputBits, codeBook);
+
+        var output = Encoding.ASCII.GetString(outputBytes);
+
+        Assert.Equal("abbcdee", output);
+    }
 }

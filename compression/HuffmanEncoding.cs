@@ -1,22 +1,48 @@
+using System.Text;
+
 namespace compression;
 
 public class HuffmanEncoding
 {
-    public bool[] Encode(byte[] input, ref Dictionary<byte, bool[]> encodingDict)
+    public bool[] Encode(byte[] input, ref Dictionary<byte, bool[]> codeBook)
     {
         HuffmanNode treeRoot = CreateHuffmanTree(input);
-        GetByteEncodings(ref encodingDict, treeRoot, new List<bool>());
+        GetByteEncodings(ref codeBook, treeRoot, new List<bool>());
         List<bool[]> output = new();
 
         foreach (var b in input)
         {
-            var encodedByte = encodingDict[b].ToArray();
+            var encodedByte = codeBook[b].ToArray();
             output.Add(encodedByte);
         }
 
         return output
             .SelectMany(b => b)
             .ToArray();
+    }
+
+    // Naive implementation just to validate encode method. Switch to tree traversal at some point.
+    public byte[] Decode(bool[] input, Dictionary<byte, bool[]> codeBook)
+    {
+        var bitsDict = codeBook.ToDictionary(kv => kv.Value.Select(v => v ? "1" : "0").Aggregate((a, b) => a + b), kv => kv.Key);
+        var output = new List<byte>();
+        var key = new StringBuilder();
+
+        for (int i = 0; i < input.Length; i++)
+        {
+            key.Append(input[i] ? "1" : "0");
+
+            if (bitsDict.ContainsKey(key.ToString()))
+            {
+                output.Add(bitsDict[key.ToString()]);
+                key.Clear();
+            }
+        }
+
+        if (key.Length > 0)
+            throw new ApplicationException("Decoding error, invalid input or codebook");
+
+        return output.ToArray();
     }
 
     public Dictionary<byte, int> GetByteFrequencies(byte[] input)

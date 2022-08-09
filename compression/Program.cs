@@ -64,11 +64,11 @@ var outputStats = (int inputLength, int outputLength) =>
 
 // encode
 
-var inputLength = 1000;
-var inputText = File.ReadAllText("don_quixote.txt").Substring(0, inputLength);
-var outputText = inputText;
-var output = Encoding.ASCII.GetBytes(outputText);
-var bwtIndex = -1;
+// var inputLength = 1000;
+// var inputText = File.ReadAllText("don_quixote.txt").Substring(0, inputLength);
+// var outputText = inputText;
+// var output = Encoding.ASCII.GetBytes(outputText);
+// var bwtIndex = -1;
 
 // using (new SimpleTimer("BWT encode bytes"))
 // {
@@ -77,12 +77,11 @@ var bwtIndex = -1;
 //     bwtIndex = result.index;
 // }
 
-Dictionary<byte, bool[]> encodingDict = new();
+// Dictionary<byte, bool[]> encodingDict = new();
+// bool[] bitOutput;
 
-bool[] bitOutput;
-
-using (new SimpleTimer("HuffmanEncoding encode bytes"))
-    bitOutput = new HuffmanEncoding().Encode(output, ref encodingDict);
+// using (new SimpleTimer("HuffmanEncoding encode bytes"))
+//     bitOutput = new HuffmanEncoding().Encode(output, ref encodingDict);
 
 
 // using (new SimpleTimer("MTF bytes")) output = new MoveToFrontTransform().Encode(output);
@@ -99,7 +98,7 @@ using (new SimpleTimer("HuffmanEncoding encode bytes"))
 // // using (new SimpleTimer("RLE bytes")) output = new RunLengthEncoding().EncodeBytes(output);
 
 // var outputLength = outputText.Length;
-outputStats(inputLength, bitOutput.Length);
+// outputStats(inputLength, bitOutput.Length);
 
 // File.WriteAllText("don_quixote_compressed.txt", outputText);
 
@@ -125,25 +124,37 @@ outputStats(inputLength, bitOutput.Length);
 // }
 
 
-// var input = Encoding.ASCII.GetBytes("this is an example of a huffman tree");
+
+
+var input = Encoding.ASCII.GetBytes("helloworld");
 // input = File.ReadAllBytes("don_quixote.txt");
 
-// bool[] output;
-// Dictionary<byte, bool[]> encodingDict = new();
+bool[] outputBits;
+byte[] output;
+Dictionary<byte, bool[]> encodingDict = new();
 
-// using (new SimpleTimer("HuffmanEncoding encode bytes"))
-//     output = new HuffmanEncoding().Encode(input, ref encodingDict);
+using (new SimpleTimer("HuffmanEncoding encode bytes"))
+    outputBits = new HuffmanEncoding().Encode(input, ref encodingDict);
 
+using (new SimpleTimer("HuffmanEncoding decode bytes"))
+    output = new HuffmanEncoding().Decode(outputBits, encodingDict);
+    
 // outputStats(input.Length, output.Length / 8);
 
-// using StreamWriter writer = new StreamWriter("dict.txt");
+using StreamWriter writer = new StreamWriter("dict.txt");
 
-// foreach (var entry in encodingDict)
-// {
-//     var sb = new StringBuilder();
-//     foreach (var bit in entry.Value)
-//         sb.Append(bit ? "1" : "0");
-//     writer.WriteLine($"{(char)entry.Key};{sb}");
-// }
+foreach (var entry in encodingDict.OrderBy(kv => kv.Value.Length))
+{
+    var sb = new StringBuilder();
+    foreach (var bit in entry.Value)
+        sb.Append(bit ? "1" : "0");
+    writer.WriteLine($"{(char)entry.Key};{sb}");
+}
 
-// var i = 1;
+
+
+
+
+
+
+var i = 1;
