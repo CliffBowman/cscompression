@@ -40,8 +40,8 @@ var outputStats = (int inputLength, int outputLength) =>
 
 // File.WriteAllBytes("repeat.bin", output);
 
-byte[] input;
-byte[] output;
+// byte[] input;
+// byte[] output;
 
 
 // input = File.ReadAllBytes("don_quixote.txt");
@@ -62,23 +62,60 @@ byte[] output;
 //     outputStats(input.Length, output.Length);
 // }
 
+// encode
+
+var inputLength = 100;
+var inputText = File.ReadAllText("don_quixote.txt").Substring(0, inputLength);
+var outputText = inputText;
+var output = Encoding.ASCII.GetBytes(outputText);
+var bwtIndex = -1;
+
+using (new SimpleTimer("BWT encode bytes"))
+{
+    var result = new BurrowsWheelerTransform().Encode(output);
+    output = result.data;
+    bwtIndex = result.index;
+}
+
+// using (new SimpleTimer("MTF bytes")) output = new MoveToFrontTransform().Encode(output);
+
+// var tmpMTF = new byte[output.Length];
+// Array.Copy(output, tmpMTF, tmpMTF.Length);
+
+// outputText = Encoding.ASCII.GetString(output);
+
+// using (new SimpleTimer("LZSS bytes")) outputText = new Lzss().Encode(outputText);
+
+// // using (new SimpleTimer("BWT bytes")) output = new BurrowsWheelerTransform().Encode(output);
+// // using (new SimpleTimer("MTF bytes")) output = new MoveToFrontTransform().Encode(output);
+// // using (new SimpleTimer("RLE bytes")) output = new RunLengthEncoding().EncodeBytes(output);
+
+// var outputLength = outputText.Length;
+
+// outputStats(inputLength, outputLength);
+
+// File.WriteAllText("don_quixote_compressed.txt", outputText);
 
 
-input = Encoding.ASCII.GetBytes("banana$");
-input = Encoding.ASCII.GetBytes("abracadabra$");
-output = new BurrowsWheelerTransform().Encode(input);
+// // decode
 
-var unencoded = Encoding.ASCII.GetString(output);
+// // inputText = File.ReadAllText("don_quixote_compressed.txt");
 
-// ard$rcaaaabb
+// using (new SimpleTimer("LZSS bytes")) outputText = new Lzss().Decode(outputText);
 
-// var list = new List<List<byte>>();
-// list.Add(new List<byte>() { 3, 1 });
-// list.Add(new List<byte>() { 1 });
-// list.Add(new List<byte>() { 2, 3, 1 });
-// list.Add(new List<byte>() { 2, 2, 2, 2 });
-// list.Add(new List<byte>() { 2, 2, 2, 2 });
+// output = Encoding.ASCII.GetBytes(outputText);
 
-// list.Sort(new ListComparer<byte>());
+// using (new SimpleTimer("MTF bytes")) output = new MoveToFrontTransform().Decode(output);
+// // using (new SimpleTimer("BWT bytes")) output = new BurrowsWheelerTransform().Decode(output);
+
+byte[] decoded;
+string decodedText;
+
+using (new SimpleTimer("BWT encode bytes"))
+{
+    decoded = new BurrowsWheelerTransform().Decode(output, bwtIndex);
+    decodedText = Encoding.ASCII.GetString(decoded);
+}
+
 
 var i = 1;

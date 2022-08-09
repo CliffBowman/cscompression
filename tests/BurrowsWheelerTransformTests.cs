@@ -19,7 +19,8 @@ public class BurrowsWheelerTransformTests
         var input = Encoding.ASCII.GetBytes("banana$");
         var output = new BurrowsWheelerTransform().Encode(input);
 
-        Assert.Equal("annb$aa", Encoding.ASCII.GetString(output));
+        Assert.Equal("annb$aa", Encoding.ASCII.GetString(output.data));
+        Assert.Equal(output.index, 4);
     }
     
     [Fact]
@@ -28,6 +29,16 @@ public class BurrowsWheelerTransformTests
         var input = Encoding.ASCII.GetBytes("abracadabra$");
         var output = new BurrowsWheelerTransform().Encode(input);
 
-        Assert.Equal("ard$rcaaaabb", Encoding.ASCII.GetString(output));
+        Assert.Equal("ard$rcaaaabb", Encoding.ASCII.GetString(output.data));
+        Assert.Equal(output.index, 3);
+    }
+
+    [Fact]
+    public void EncodeDecodeTest()
+    {
+        var input = Encoding.ASCII.GetBytes("annb$aa");
+        var output = new BurrowsWheelerTransform().Decode(input, 4);
+
+        Assert.Equal("banana$", Encoding.ASCII.GetString(output));
     }
 }
