@@ -9,13 +9,16 @@ public class BurrowsWheelerTransform
         List<byte> output = new();
         List<Suffix> suffixes = new();
 
-        for (int i = 0; i < input.Length; i++)
+        using (new SimpleTimer("Build suffixes"))
         {
-            var suffix = input.Skip(i).ToList();
-            suffixes.Add(new Suffix { Index = i, SuffixBytes = suffix });
+            for (int i = 0; i < input.Length; i++)
+                suffixes.Add(new Suffix(input, i));
         }
 
-        suffixes.Sort(new SuffixComparer());
+        using (new SimpleTimer("Sort suffixes"))
+        {
+            suffixes.Sort(new SuffixComparer());
+        }
 
         for (int i = 0; i < suffixes.Count; i++)
         {
@@ -74,12 +77,24 @@ public class BurrowsWheelerTransform
 
     private class Suffix
     {
-        public int Index { get; set; }
-        public List<byte> SuffixBytes { get; set; } = new List<byte>();
+        private byte[] _input;
+
+        public Suffix(byte[] input, int index)
+        {
+            _input = input;
+            Index = index;
+        }
+
+        public int Index { get; private set; }
+
+        // Not a property due to overhead of span construction. Was sneaky slow as property.
+        public ReadOnlySpan<byte> GetSpan() => new ReadOnlySpan<byte>(_input, Index, _input.Length - Index);
 
         public override string ToString()
         {
-            return $"{string.Join("", Encoding.ASCII.GetString(SuffixBytes.ToArray()))} {Index}";
+            var debugSpan = GetSpan();
+            var decodedText = Encoding.ASCII.GetString(debugSpan.Slice(0, Math.Min(100, debugSpan.Length)));
+            return $"{decodedText} {Index}";
         }
     }
 
@@ -87,18 +102,21 @@ public class BurrowsWheelerTransform
     {
         public int Compare(Suffix x, Suffix y)
         {
-            if (x.SuffixBytes.Count == 0 && y.SuffixBytes.Count == 0)
+            ReadOnlySpan<byte> spanX = x.GetSpan();
+            ReadOnlySpan<byte> spanY = y.GetSpan();
+
+            if (spanX.Length == 0 && spanY.Length == 0)
                 return 0;
 
-            if (x.SuffixBytes.Count > 0 && y.SuffixBytes.Count == 0)
+            if (spanX.Length > 0 && spanY.Length == 0)
                 return 1;
 
-            if (x.SuffixBytes.Count == 0 && y.SuffixBytes.Count > 0)
+            if (spanX.Length == 0 && spanY.Length > 0)
                 return -1;
 
-            for (var i = 0; i < Math.Min(x.SuffixBytes.Count, y.SuffixBytes.Count); i++)
+            for (var i = 0; i < Math.Min(spanX.Length, spanY.Length); i++)
             {
-                var result = x.SuffixBytes[i].CompareTo(y.SuffixBytes[i]);
+                var result = spanX[i].CompareTo(spanY[i]);
 
                 if (result != 0)
                     return result;

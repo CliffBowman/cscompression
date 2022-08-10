@@ -126,35 +126,41 @@ var outputStats = (int inputLength, int outputLength) =>
 
 
 
-var input = Encoding.ASCII.GetBytes("helloworld");
+// var input = Encoding.ASCII.GetBytes("helloworld");
 // input = File.ReadAllBytes("don_quixote.txt");
 
-bool[] outputBits;
-byte[] output;
-Dictionary<byte, bool[]> encodingDict = new();
+// bool[] outputBits;
+// byte[] output;
+// Dictionary<byte, bool[]> encodingDict = new();
 
-using (new SimpleTimer("HuffmanEncoding encode bytes"))
-    outputBits = new HuffmanEncoding().Encode(input, ref encodingDict);
+// using (new SimpleTimer("HuffmanEncoding encode bytes"))
+//     outputBits = new HuffmanEncoding().Encode(input, ref encodingDict);
 
-using (new SimpleTimer("HuffmanEncoding decode bytes"))
-    output = new HuffmanEncoding().Decode(outputBits, encodingDict);
-    
-// outputStats(input.Length, output.Length / 8);
+// using (new SimpleTimer("HuffmanEncoding decode bytes"))
+//     output = new HuffmanEncoding().Decode(outputBits, encodingDict);
 
-using StreamWriter writer = new StreamWriter("dict.txt");
+// outputStats(input.Length, outputBits.Length / 8);
 
-foreach (var entry in encodingDict.OrderBy(kv => kv.Value.Length))
-{
-    var sb = new StringBuilder();
-    foreach (var bit in entry.Value)
-        sb.Append(bit ? "1" : "0");
-    writer.WriteLine($"{(char)entry.Key};{sb}");
-}
+// using StreamWriter writer = new StreamWriter("dict.txt");
 
-
+// foreach (var entry in encodingDict.OrderBy(kv => kv.Value.Length))
+// {
+//     var sb = new StringBuilder();
+//     foreach (var bit in entry.Value)
+//         sb.Append(bit ? "1" : "0");
+//     writer.WriteLine($"{(char)entry.Key};{sb}");
+// }
 
 
+var input = File.ReadAllText("don_quixote.txt").Substring(0, 100_000);
 
+using var time = new SimpleTimer("BWT");
+var output = new BurrowsWheelerTransform().Encode(Encoding.ASCII.GetBytes(input));
+var outputText = Encoding.ASCII.GetString(output.data);
+// var outputText = input;
+
+// outputText = new RunLengthEncoding().Encode(outputText);
+outputStats(input.Length, outputText.Length);
 
 
 var i = 1;
