@@ -32,6 +32,16 @@ public class BurrowsWheelerTransformTests
         Assert.Equal("ard$rcaaaabb", Encoding.ASCII.GetString(output.data));
         Assert.Equal(output.index, 3);
     }
+      
+    [Fact]
+    public void EncodingTest()
+    {
+        var input = Encoding.ASCII.GetBytes("bana");
+        var output = new BurrowsWheelerTransform().Encode(input);
+
+        Assert.Equal("nbaa", Encoding.ASCII.GetString(output.data));
+        Assert.Equal(output.index, 2);
+    }
 
     [Fact]
     public void EncodeDecodeTest()

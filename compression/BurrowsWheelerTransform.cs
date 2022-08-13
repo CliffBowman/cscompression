@@ -7,37 +7,33 @@ public class BurrowsWheelerTransform
     public (byte[] data, int index) Encode(byte[] input)
     {
         List<byte> output = new();
-        List<Suffix> suffixes = new();
+        List<Rotation> rotations = new();
 
-        using (new SimpleTimer("Build suffixes"))
+        using (new SimpleTimer("Build rotations"))
         {
             for (int i = 0; i < input.Length; i++)
-                suffixes.Add(new Suffix(input, i));
+                rotations.Add(new Rotation(input, i));
         }
 
-        using (new SimpleTimer("Sort suffixes"))
+        using (new SimpleTimer("Sort rotations"))
         {
-            suffixes.Sort(new SuffixComparer());
+            rotations.Sort(new RotationComparer());
         }
 
-        for (int i = 0; i < suffixes.Count; i++)
-        {
-            var suffixIndex = (suffixes[i].Index - 1 + suffixes.Count) % suffixes.Count;
-            output.Add(input[suffixIndex]);
-        }
+        int? index = null;
+        var inputRotation = new Rotation(input, 0);
 
-        var index = -1;
-
-        for (int i = 0; i < suffixes.Count; i++)
+        for (int i = 0; i < rotations.Count; i++)
         {
-            if (suffixes[i].Index == 0)
-            {
+            var rotation = rotations[i];
+
+            output.Add(rotation[rotation.Length - 1]);
+
+            if (new RotationComparer().Compare(rotation, inputRotation) == 0)
                 index = i;
-                break;
-            }
         }
 
-        return (output.ToArray(), index);
+        return (output.ToArray(), index.Value);
     }
 
     public byte[] Decode(byte[] input, int index)
@@ -75,48 +71,37 @@ public class BurrowsWheelerTransform
         return table[index].ToArray();
     }
 
-    private class Suffix
+    private class Rotation
     {
-        private byte[] _input;
+        private readonly byte[] _input;
+        private readonly int _rotationPoint;
 
-        public Suffix(byte[] input, int index)
+        public Rotation(byte[] input, int rotationPoint)
         {
             _input = input;
-            Index = index;
+            _rotationPoint = rotationPoint;
         }
 
-        public int Index { get; private set; }
-
-        // Not a property due to overhead of span construction. Was sneaky slow as property.
-        public ReadOnlySpan<byte> GetSpan() => new ReadOnlySpan<byte>(_input, Index, _input.Length - Index);
-
-        public override string ToString()
-        {
-            var debugSpan = GetSpan();
-            var decodedText = Encoding.ASCII.GetString(debugSpan.Slice(0, Math.Min(100, debugSpan.Length)));
-            return $"{decodedText} {Index}";
-        }
+        public int Length => _input.Length;
+        public byte this[int index] => _input[(_rotationPoint + index) % _input.Length];
     }
 
-    private class SuffixComparer : IComparer<Suffix>
+    private class RotationComparer : IComparer<Rotation>
     {
-        public int Compare(Suffix x, Suffix y)
+        public int Compare(Rotation x, Rotation y)
         {
-            ReadOnlySpan<byte> spanX = x.GetSpan();
-            ReadOnlySpan<byte> spanY = y.GetSpan();
-
-            if (spanX.Length == 0 && spanY.Length == 0)
+            if (x.Length == 0 && y.Length == 0)
                 return 0;
 
-            if (spanX.Length > 0 && spanY.Length == 0)
+            if (x.Length > 0 && y.Length == 0)
                 return 1;
 
-            if (spanX.Length == 0 && spanY.Length > 0)
+            if (x.Length == 0 && y.Length > 0)
                 return -1;
 
-            for (var i = 0; i < Math.Min(spanX.Length, spanY.Length); i++)
+            for (var i = 0; i < Math.Min(x.Length, y.Length); i++)
             {
-                var result = spanX[i].CompareTo(spanY[i]);
+                var result = x[i].CompareTo(y[i]);
 
                 if (result != 0)
                     return result;
