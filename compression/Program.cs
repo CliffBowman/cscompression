@@ -6,7 +6,7 @@ using compression;
 var outputStats = (int inputLength, int outputLength) =>
 {
     // Console.WriteLine($"{inputLength} in, {outputLength} out, {(1 - ((double)inputLength / (double)outputLength)) * 100}%");
-    Console.WriteLine($"{inputLength} in, {outputLength} out, {((double)outputLength / (double)inputLength) * 100}% of original size.");
+    Console.WriteLine($"=== {inputLength} in, {outputLength} out, {((double)outputLength / (double)inputLength) * 100}% of original size. ===");
 };
 
 // var input = File.ReadAllText(@"don_quixote.txt").Substring(0, 10_000);
@@ -152,15 +152,26 @@ var outputStats = (int inputLength, int outputLength) =>
 // }
 
 
-var input = File.ReadAllText("don_quixote.txt").Substring(0, 100_000);
 
-using var time = new SimpleTimer("BWT");
-var output = new BurrowsWheelerTransform().Encode(Encoding.ASCII.GetBytes(input));
-var outputText = Encoding.ASCII.GetString(output.data);
-// var outputText = input;
+// var input = Encoding.ASCII.GetBytes("helloworld");
+// input = File.ReadAllBytes("don_quixote.txt");
 
-// outputText = new RunLengthEncoding().Encode(outputText);
-outputStats(input.Length, outputText.Length);
+var input = File.ReadAllBytes("don_quixote.txt");
+(byte[] data, int index) transformed;
+byte[] output;
+
+using (new SimpleTimer("BWT transform"))
+    transformed = new BurrowsWheelerTransform().Encode(input);
+
+using (new SimpleTimer("BTW inverse"))
+    output = new BurrowsWheelerTransform().Decode(transformed.data, transformed.index);
+
+
+
+// Assert.Equal("banana$", Encoding.ASCII.GetString(output));
+
+
+
 
 
 var i = 1;

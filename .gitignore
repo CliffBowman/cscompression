@@ -1,3 +1,4 @@
 bin
 obj
 compression/run.txt
+compression/output.txt

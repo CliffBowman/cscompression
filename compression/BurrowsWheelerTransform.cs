@@ -36,39 +36,54 @@ public class BurrowsWheelerTransform
         return (output.ToArray(), index.Value);
     }
 
+    // Reference: https://www.geeksforgeeks.org/inverting-burrows-wheeler-transform/
     public byte[] Decode(byte[] input, int index)
     {
-        List<byte> output = new();
-        List<List<byte>> table = new();
+        if (input == null)
+            throw new ArgumentNullException(nameof(input));
 
-        for (int i = 0; i < input.Length; i++)
+        if (index < 0)
+            throw new ArgumentOutOfRangeException(nameof(index));
+
+        var indexLists = new List<List<int>>();
+        var indexListsCurrentPosition = new Dictionary<List<int>, int>();
+        var byteShift = new Dictionary<int, int>();
+        var output = new List<byte>();
+
+        // sort the input
+        var sortedInput = input.OrderBy(b => b).ToList();
+
+        // for all possible byte values create a list to keep track of indexes of that byte in the input array
+        for (var i = 0; i <= byte.MaxValue; i++)
         {
-            var row = new List<byte>();
-
-            table.Add(row);
-
-            for (int j = 0; j < input.Length; j++)
-            {
-                row.Add(0);
-            }
+            var list = new List<int>();
+            indexLists.Add(list);
+            indexListsCurrentPosition.Add(list, 0);
         }
 
-        for (int col = 0; col < input.Length; col++)
+        // iterate through the input and add all indexes found for the byte value
+        for (var i = 0; i < input.Length; i++)
+            indexLists[input[i]].Add(i);
+
+        // iterate through the sorted input and find the list of indexes for that byte value
+        // each time that byte value is found assign the index at the current position as the shift value
+        // and move the current position to the next index.
+        for (var i = 0; i < sortedInput.Count; i++)
         {
-            var colIndex = input.Length - col - 1;
-
-            for (int row = 0; row < input.Length; row++)
-                table[row][colIndex] = input[row];
-
-            table.Sort(new ListComparer<byte>());
+            var indexList = indexLists[sortedInput[i]];
+            var currentPosition = indexListsCurrentPosition[indexList];
+            byteShift[i] = indexList[currentPosition];
+            indexListsCurrentPosition[indexList]++;
         }
 
-        // Console.WriteLine("====");
+        // apply the shift values to the input to get the original byte array
+        for (var i = 0; i < input.Length; i++)
+        {
+            index = byteShift[index];
+            output.Add(input[index]);
+        }
 
-        // for (var row = 0; row < table.Count; row++)
-        //     Console.WriteLine(row + " - " + string.Join("", table[row].Select(b => (char)b)));
-
-        return table[index].ToArray();
+        return output.ToArray();
     }
 
     private class Rotation
