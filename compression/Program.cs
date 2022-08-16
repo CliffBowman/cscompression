@@ -156,22 +156,22 @@ var outputStats = (int inputLength, int outputLength) =>
 // var input = Encoding.ASCII.GetBytes("helloworld");
 // input = File.ReadAllBytes("don_quixote.txt");
 
-var input = File.ReadAllBytes("don_quixote.txt");
+var input = File.ReadAllBytes("don_quixote.txt").Take(500_000).ToArray();
+input = Encoding.UTF8.GetBytes("abcccccdefgh");
 (byte[] data, int index) transformed;
 byte[] output;
+string outputText;
 
-using (new SimpleTimer("BWT transform"))
-    transformed = new BurrowsWheelerTransform().Encode(input);
+// output = new RunLengthEncoding().EncodeBytes(input);
+// outputStats(input.Length, output.Length);
 
-using (new SimpleTimer("BTW inverse"))
-    output = new BurrowsWheelerTransform().Decode(transformed.data, transformed.index);
+// outputText = new RunLengthEncoding().Encode(Encoding.UTF8.GetString(input));
+// outputStats(input.Length, outputText.Length);
 
+output = new RunLengthEncodingRLE90Impl().Encode(input);
+output = new RunLengthEncodingRLE90Impl().Decode(output);
 
-
-// Assert.Equal("banana$", Encoding.ASCII.GetString(output));
-
-
-
+// outputStats(input.Length, output.Length);
 
 
 var i = 1;
