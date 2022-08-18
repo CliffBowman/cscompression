@@ -1,8 +1,8 @@
-namespace tests;
+namespace tests.encoders;
 
 using Xunit.Abstractions;
-using compression;
 using System.Text;
+using compression.encoders;
 
 public class HuffmanEncodingTests
 {

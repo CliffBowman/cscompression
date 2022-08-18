@@ -1,8 +1,9 @@
-namespace tests;
+namespace tests.transforms;
 
 using Xunit.Abstractions;
 using compression;
 using System.Text;
+using compression.transforms;
 
 public class BurrowsWheelerTransformTests
 {

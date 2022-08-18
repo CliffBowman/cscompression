@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace compression;
+namespace compression.encoders;
 
 public class HuffmanEncoding
 {

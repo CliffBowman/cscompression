@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <None Update="don_quixote.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="static/don_quixote.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

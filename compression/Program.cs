@@ -2,6 +2,7 @@
 using System.IO.Compression;
 using System.Text;
 using compression;
+using compression.transforms;
 
 var outputStats = (int inputLength, int outputLength) =>
 {

@@ -2,7 +2,7 @@ using System.IO.Compression;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace compression;
+namespace compression.encoders;
 
 public class Lzss
 {

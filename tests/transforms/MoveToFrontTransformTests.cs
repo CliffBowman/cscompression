@@ -1,7 +1,7 @@
-namespace tests;
+namespace tests.transforms;
 
 using Xunit.Abstractions;
-using compression;
+using compression.transforms;
 
 public class MoveToFrontTransformTests
 {

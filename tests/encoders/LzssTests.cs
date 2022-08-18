@@ -1,8 +1,8 @@
-namespace tests;
+namespace tests.encoders;
 
 using System.IO.Compression;
+using compression.encoders;
 using Xunit.Abstractions;
-using compression;
 
 public class LzssTests
 {

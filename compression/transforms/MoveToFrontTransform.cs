@@ -1,4 +1,4 @@
-namespace compression;
+namespace compression.transforms;
 
 public class MoveToFrontTransform
 {

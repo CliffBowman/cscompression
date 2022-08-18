@@ -4,6 +4,7 @@ using Xunit.Abstractions;
 using compression;
 using System.Text;
 using compression.encoders;
+using compression.transforms;
 
 public class FullCompressionTests
 {
@@ -27,7 +28,7 @@ public class FullCompressionTests
         var bytes = (string data) => Encoding.UTF8.GetBytes(data);
         var str = (byte[] data) => Encoding.UTF8.GetString(data);
         var codebook = new Dictionary<byte, bool[]>();
-        var input = File.ReadAllBytes("don_quixote.txt").Take(100_000).ToArray();
+        var input = File.ReadAllBytes("static/don_quixote.txt").Take(100_000).ToArray();
 
         // Encode steps
         var outputRLE1 = new RunLengthEncoding().Encode(input);
