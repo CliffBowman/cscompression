@@ -153,25 +153,20 @@ var outputStats = (int inputLength, int outputLength) =>
 
 
 
-// var input = Encoding.ASCII.GetBytes("helloworld");
-// input = File.ReadAllBytes("don_quixote.txt");
+using var timer = new SimpleTimer("Full transfor");
 
-var input = File.ReadAllBytes("don_quixote.txt").Take(500_000).ToArray();
-input = Encoding.UTF8.GetBytes("abcccccdefgh");
+
+var input = File.ReadAllBytes("don_quixote.txt");//.Take(500_000).ToArray();
+// input = Encoding.UTF8.GetBytes("bana");
 (byte[] data, int index) transformed;
 byte[] output;
 string outputText;
 
-// output = new RunLengthEncoding().EncodeBytes(input);
-// outputStats(input.Length, output.Length);
+var outputBWT = new BurrowsWheelerTransform().Encode(input);
 
-// outputText = new RunLengthEncoding().Encode(Encoding.UTF8.GetString(input));
-// outputStats(input.Length, outputText.Length);
+// Console.WriteLine(Encoding.UTF8.GetString(outputBWT.data));
+// annb$aa
 
-output = new RunLengthEncodingRLE90Impl().Encode(input);
-output = new RunLengthEncodingRLE90Impl().Decode(output);
-
-// outputStats(input.Length, output.Length);
 
 
 var i = 1;

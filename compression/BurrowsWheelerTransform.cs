@@ -21,13 +21,13 @@ public class BurrowsWheelerTransform
         }
 
         int? index = null;
-        var inputRotation = new Rotation(input, 0);
+        Rotation inputRotation = new(input, 0);
 
         for (int i = 0; i < rotations.Count; i++)
         {
             var rotation = rotations[i];
 
-            output.Add(rotation[rotation.Length - 1]);
+            output.Add(rotation.GetLastByte());
 
             if (new RotationComparer().Compare(rotation, inputRotation) == 0)
                 index = i;
@@ -90,31 +90,27 @@ public class BurrowsWheelerTransform
     {
         private readonly byte[] _input;
         private readonly int _rotationPoint;
+        private readonly int _length;
 
         public Rotation(byte[] input, int rotationPoint)
         {
             _input = input;
+            _length = input.Length - rotationPoint;
             _rotationPoint = rotationPoint;
         }
 
-        public int Length => _input.Length;
-        public byte this[int index] => _input[(_rotationPoint + index) % _input.Length];
+        public int Length => _length;
+        public byte this[int index] => _input[index + _rotationPoint];
+        public byte GetLastByte() => _input[(_rotationPoint + _input.Length - 1) % _input.Length];
     }
 
     private class RotationComparer : IComparer<Rotation>
     {
         public int Compare(Rotation x, Rotation y)
         {
-            if (x.Length == 0 && y.Length == 0)
-                return 0;
+            var minLength = Math.Min(x.Length, y.Length);
 
-            if (x.Length > 0 && y.Length == 0)
-                return 1;
-
-            if (x.Length == 0 && y.Length > 0)
-                return -1;
-
-            for (var i = 0; i < Math.Min(x.Length, y.Length); i++)
+            for (var i = 0; i < minLength; i++)
             {
                 var result = x[i].CompareTo(y[i]);
 
@@ -122,7 +118,10 @@ public class BurrowsWheelerTransform
                     return result;
             }
 
-            return 0;
+            if (x.Length == y.Length)
+                return 0;
+
+            return x.Length < y.Length ? -1 : 1;
         }
     }
 }
