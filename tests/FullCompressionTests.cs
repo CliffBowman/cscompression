@@ -3,6 +3,7 @@ namespace tests;
 using Xunit.Abstractions;
 using compression;
 using System.Text;
+using compression.encoders;
 
 public class FullCompressionTests
 {
@@ -29,7 +30,7 @@ public class FullCompressionTests
         var input = File.ReadAllBytes("don_quixote.txt").Take(100_000).ToArray();
 
         // Encode steps
-        var outputRLE1 = new RunLengthEncodingRLE90Impl().Encode(input);
+        var outputRLE1 = new RunLengthEncoding().Encode(input);
         outputStats("RLE90", input.Length, outputRLE1.Length);
 
         var outputBWT = new BurrowsWheelerTransform().Encode(outputRLE1);
@@ -38,7 +39,7 @@ public class FullCompressionTests
         var outputMTF = new MoveToFrontTransform().Encode(outputBWT.data);
         outputStats("MTF", outputBWT.data.Length, outputMTF.Length);
 
-        var outputRLE2 = new RunLengthEncodingRLE90Impl().Encode(outputMTF);
+        var outputRLE2 = new RunLengthEncoding().Encode(outputMTF);
         outputStats("RLE90", outputMTF.Length, outputRLE2.Length);
 
         var outputBits = new HuffmanEncoding().Encode(outputRLE2, ref codebook);
@@ -48,7 +49,7 @@ public class FullCompressionTests
         var decodedHuffman = new HuffmanEncoding().Decode(outputBits, codebook);
         Assert.Equal(decodedHuffman, outputRLE2);
 
-        var decodedRLE = new RunLengthEncodingRLE90Impl().Decode(decodedHuffman);
+        var decodedRLE = new RunLengthEncoding().Decode(decodedHuffman);
         Assert.Equal(decodedRLE, outputMTF);
 
         var decodedMTF = new MoveToFrontTransform().Decode(decodedRLE);
@@ -57,7 +58,7 @@ public class FullCompressionTests
         var decodedBWT = new BurrowsWheelerTransform().Decode(decodedMTF, outputBWT.index);
         Assert.Equal(decodedBWT, outputRLE1);
 
-        decodedRLE = new RunLengthEncodingRLE90Impl().Decode(decodedBWT);
+        decodedRLE = new RunLengthEncoding().Decode(decodedBWT);
         Assert.Equal(decodedRLE, input);
     }
 }

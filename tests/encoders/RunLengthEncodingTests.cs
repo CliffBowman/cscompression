@@ -1,26 +1,26 @@
-namespace tests;
+namespace tests.encoders;
 
 using Xunit.Abstractions;
-using compression;
 using System.Text;
+using compression.encoders;
 
-public class RunLengthEncodingRLE90ImplTests
+public class RunLengthEncodingTests
 {
     private readonly ITestOutputHelper _output;
 
-    public RunLengthEncodingRLE90ImplTests(ITestOutputHelper output)
+    public RunLengthEncodingTests(ITestOutputHelper output)
     {
         _output = output;
     }
 
     public byte[] GetBytes(string txt) => Encoding.ASCII.GetBytes(txt);
-    public byte EscapeByte = RunLengthEncodingRLE90Impl.EscapeByte;
+    public byte EscapeByte = RunLengthEncoding.EscapeByte;
 
     [Fact]
     public void NonRepeatingTest()
     {
         var input = GetBytes("abcdefgh");
-        var output = new RunLengthEncodingRLE90Impl().Encode(input);
+        var output = new RunLengthEncoding().Encode(input);
 
         Assert.Equal(GetBytes("abcdefgh"), output);
     }
@@ -29,7 +29,7 @@ public class RunLengthEncodingRLE90ImplTests
     public void OneRepeatingSequenceTest()
     {
         var input = GetBytes("abcccccdefgh");
-        var output = new RunLengthEncodingRLE90Impl().Encode(input);
+        var output = new RunLengthEncoding().Encode(input);
         var expected = GetBytes("abc")
             .Concat(new byte[] { EscapeByte, 0x04 })
             .Concat(GetBytes("defgh"))
@@ -42,8 +42,8 @@ public class RunLengthEncodingRLE90ImplTests
     public void EncodeDecodeTest()
     {
         var input = GetBytes("abcccccdefgh");
-        var encoded = new RunLengthEncodingRLE90Impl().Encode(input);
-        var decoded = new RunLengthEncodingRLE90Impl().Decode(encoded);
+        var encoded = new RunLengthEncoding().Encode(input);
+        var decoded = new RunLengthEncoding().Decode(encoded);
 
         Assert.Equal(input, decoded);
     }

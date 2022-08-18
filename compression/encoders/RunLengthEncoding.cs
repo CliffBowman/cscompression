@@ -1,6 +1,6 @@
-namespace compression;
+namespace compression.encoders;
 
-public class RunLengthEncodingRLE90Impl
+public class RunLengthEncoding
 {
     public const byte EscapeByte = 0x90;
 
