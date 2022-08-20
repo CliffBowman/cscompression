@@ -27,7 +27,7 @@ public class BurrowsWheelerTransform
         {
             var rotation = rotations[i];
 
-            output.Add(rotation.GetLastByte());
+            output.Add(rotation[rotation.Length - 1]);
 
             if (new RotationComparer().Compare(rotation, inputRotation) == 0)
                 index = i;
@@ -90,18 +90,15 @@ public class BurrowsWheelerTransform
     {
         private readonly byte[] _input;
         private readonly int _rotationPoint;
-        private readonly int _length;
 
         public Rotation(byte[] input, int rotationPoint)
         {
             _input = input;
-            _length = input.Length - rotationPoint;
             _rotationPoint = rotationPoint;
         }
 
-        public int Length => _length;
-        public byte this[int index] => _input[index + _rotationPoint];
-        public byte GetLastByte() => _input[(_rotationPoint + _input.Length - 1) % _input.Length];
+        public int Length => _input.Length;
+        public byte this[int index] => _input[(_rotationPoint + index) % _input.Length];
     }
 
     private class RotationComparer : IComparer<Rotation>
