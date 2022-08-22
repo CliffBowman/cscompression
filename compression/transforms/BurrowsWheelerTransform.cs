@@ -106,6 +106,9 @@ public class BurrowsWheelerTransform
     {
         public int Compare(Rotation x, Rotation y)
         {
+            if (Object.ReferenceEquals(x, y))
+                return 0;
+
             var minLength = Math.Min(x.Length, y.Length);
 
             for (var i = 0; i < minLength; i++)
