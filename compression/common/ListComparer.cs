@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace compression;
+namespace compression.common;
 
 public class ListComparer<T> : IComparer<IList<T>> where T : IComparable
 {

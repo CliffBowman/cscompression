@@ -2,6 +2,7 @@
 using System.IO.Compression;
 using System.Text;
 using compression;
+using compression.common;
 using compression.transforms;
 
 var outputStats = (int inputLength, int outputLength) =>
@@ -157,8 +158,8 @@ var outputStats = (int inputLength, int outputLength) =>
 using var timer = new SimpleTimer("Full transfor");
 
 
-var input = File.ReadAllBytes("don_quixote.txt");//.Take(500_000).ToArray();
-// input = Encoding.UTF8.GetBytes("bana");
+var input = File.ReadAllBytes("static/don_quixote.txt").Take(500_000).ToArray();
+// input = Encoding.UTF8.GetBytes("banana$");
 (byte[] data, int index) transformed;
 byte[] output;
 string outputText;

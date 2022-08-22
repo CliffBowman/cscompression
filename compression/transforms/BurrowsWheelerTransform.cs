@@ -1,4 +1,5 @@
 using System.Text;
+using compression.common;
 
 namespace compression.transforms;
 

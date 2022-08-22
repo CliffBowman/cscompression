@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace compression;
+namespace compression.common;
 
 public class SimpleTimer : IDisposable
 {

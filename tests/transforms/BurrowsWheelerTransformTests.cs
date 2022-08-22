@@ -4,6 +4,7 @@ using Xunit.Abstractions;
 using compression;
 using System.Text;
 using compression.transforms;
+using compression.common;
 
 public class BurrowsWheelerTransformTests
 {
