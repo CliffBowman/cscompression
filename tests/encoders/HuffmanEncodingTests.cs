@@ -3,6 +3,7 @@ namespace tests.encoders;
 using Xunit.Abstractions;
 using System.Text;
 using compression.encoders;
+using compression.common;
 
 public class HuffmanEncodingTests
 {
@@ -52,7 +53,7 @@ public class HuffmanEncodingTests
     public void DecodeHuffmanTest()
     {
         var input = Encoding.ASCII.GetBytes("abbcdee");
-        Dictionary<byte, bool[]> codeBook = new();
+        Codebook codeBook = new();
 
         var outputBits = new HuffmanEncoding().Encode(input, ref codeBook);
         var outputBytes = new HuffmanEncoding().Decode(outputBits, codeBook);

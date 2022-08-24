@@ -1,8 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using compression;
 using compression.common;
+using compression.encoders;
 using compression.transforms;
 
 var outputStats = (int inputLength, int outputLength) =>
@@ -155,20 +159,29 @@ var outputStats = (int inputLength, int outputLength) =>
 
 
 
-using var timer = new SimpleTimer("Full transfor");
+using var timer = new SimpleTimer("Full operation");
 
 
-var input = File.ReadAllBytes("static/don_quixote.txt").Take(500_000).ToArray();
+// var input = File.ReadAllBytes("static/don_quixote.txt").Take(500_000).ToArray();
 // input = Encoding.UTF8.GetBytes("banana$");
+byte[] input;
 (byte[] data, int index) transformed;
 byte[] output;
 string outputText;
 
-var outputBWT = new BurrowsWheelerTransform().Encode(input);
+using var stream = File.Open("static/enwiki-20220820-pages-articles-multistream1.xml", FileMode.Open, FileAccess.Read);
 
-// Console.WriteLine(Encoding.UTF8.GetString(outputBWT.data));
-// annb$aa
+input = new byte[100_000];
+stream.Read(input, 0, input.Length);
 
+var codebook = new Codebook();
+var outputBits = new Bzip2ishEncoding().Encode(input, ref codebook);
+using var outStream = File.Open("output/output.bin", FileMode.Create, FileAccess.Write);
 
+codebook.Save(outStream);
+
+var outputBytes = codebook.GetBytes(outputBits);
+
+outStream.Write(outputBytes, 0, outputBytes.Length);
 
 var i = 1;

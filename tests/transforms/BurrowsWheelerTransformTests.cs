@@ -80,11 +80,11 @@ public class BurrowsWheelerTransformTests
         Assert.Equal("banana$", Encoding.ASCII.GetString(output));
     }
 
-    [Fact(Skip = "Long running full encode / decode validation test")]
-    // [Fact]
+    // [Fact(Skip = "Long running full encode / decode validation test")]
+    [Fact]
     public void FullEncodeDecodeTest()
     {
-        var input = File.ReadAllBytes("don_quixote.txt");
+        var input = File.ReadAllBytes("static/don_quixote.txt");
         (byte[] data, int index) transformed;
         byte[] output;
 

@@ -1,10 +1,11 @@
 using System.Text;
+using compression.common;
 
 namespace compression.encoders;
 
 public class HuffmanEncoding
 {
-    public bool[] Encode(byte[] input, ref Dictionary<byte, bool[]> codeBook)
+    public bool[] Encode(byte[] input, ref Codebook codeBook)
     {
         HuffmanNode treeRoot = CreateHuffmanTree(input);
         GetByteEncodings(ref codeBook, treeRoot, new List<bool>());
@@ -22,7 +23,7 @@ public class HuffmanEncoding
     }
 
     // Naive implementation just to validate encode method. Switch to tree traversal at some point.
-    public byte[] Decode(bool[] input, Dictionary<byte, bool[]> codeBook)
+    public byte[] Decode(bool[] input, Codebook codeBook)
     {
         var bitsDict = codeBook.ToDictionary(kv => kv.Value.Select(v => v ? "1" : "0").Aggregate((a, b) => a + b), kv => kv.Key);
         var output = new List<byte>();
@@ -96,23 +97,23 @@ public class HuffmanEncoding
         return queue.Dequeue();
     }
 
-    public void GetByteEncodings(ref Dictionary<byte, bool[]> dict, HuffmanNode node, List<bool> currentPath)
+    public void GetByteEncodings(ref Codebook codebook, HuffmanNode node, List<bool> currentPath)
     {
         if (node.LeftNode != null)
         {
             currentPath.Add(true);
-            GetByteEncodings(ref dict, node.LeftNode, currentPath);
+            GetByteEncodings(ref codebook, node.LeftNode, currentPath);
         }
 
         if (node.RightNode != null)
         {
             currentPath.Add(false);
-            GetByteEncodings(ref dict, node.RightNode, currentPath);
+            GetByteEncodings(ref codebook, node.RightNode, currentPath);
         }
 
         if (node.LeftNode == null && node.RightNode == null)
         {
-            dict.Add(node.Byte.Value, currentPath.ToArray());
+            codebook.Add(node.Byte.Value, currentPath.ToArray());
         }
 
         if (currentPath.Any())
